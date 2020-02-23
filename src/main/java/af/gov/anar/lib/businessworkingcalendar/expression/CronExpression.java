@@ -25,7 +25,6 @@ import java.util.stream.Stream;
 
 /**
  * A representation of cron expressions.
- * @author Maxime Suret
  */
 public class CronExpression {
 
