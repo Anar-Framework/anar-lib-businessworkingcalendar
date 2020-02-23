@@ -9,6 +9,7 @@ import java.util.HashSet;
 import static org.junit.Assert.assertEquals;
 
 import af.gov.anar.lib.businessworkingcalendar.domain.BusinessHours;
+import af.gov.anar.lib.businessworkingcalendar.parser.BusinessHoursParser;
 import org.junit.Test;
 
 public class BusinessHoursTest {
