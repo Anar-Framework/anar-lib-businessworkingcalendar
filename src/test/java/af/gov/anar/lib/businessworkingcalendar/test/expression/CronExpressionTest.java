@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 import static org.junit.Assert.assertEquals;
 
-import af.gov.anar.lib.businessworkingcalendar.domain.BusinessTemporal;
+import af.gov.anar.lib.businessworkingcalendar.domain.BusinessWorkingTemporal;
 import af.gov.anar.lib.businessworkingcalendar.expression.CronExpression;
 import org.junit.Test;
 
@@ -19,7 +19,7 @@ public class CronExpressionTest {
     @Test
     public void cronFromTemporal() {
         assertEquals(
-                new CronExpression(BusinessTemporal.of(Collections.singletonMap(ChronoField.HOUR_OF_DAY, 5))).toString(),
+                new CronExpression(BusinessWorkingTemporal.of(Collections.singletonMap(ChronoField.HOUR_OF_DAY, 5))).toString(),
                 "0 5 * * *");
         assertEquals(new CronExpression(LocalDate.of(2015, 1, 12)).toString(), "0 0 12 1 1");
         assertEquals(new CronExpression(LocalTime.of(18, 2)).toString(), "2 18 * * *");
@@ -33,7 +33,7 @@ public class CronExpressionTest {
         CronExpression cron3 = new CronExpression(LocalTime.of(18, 04));
         CronExpression cron4 = new CronExpression(LocalTime.of(18, 06));
         CronExpression cron5 = new CronExpression(LocalTime.of(19, 03));
-        CronExpression cron6 = new CronExpression(BusinessTemporal.of(Collections.singletonMap(ChronoField.MINUTE_OF_HOUR, 2)));
+        CronExpression cron6 = new CronExpression(BusinessWorkingTemporal.of(Collections.singletonMap(ChronoField.MINUTE_OF_HOUR, 2)));
 
         Set<CronExpression> merged = CronExpression.merge(Arrays.asList(cron1, cron2));
         assertEquals(merged.size(), 1);

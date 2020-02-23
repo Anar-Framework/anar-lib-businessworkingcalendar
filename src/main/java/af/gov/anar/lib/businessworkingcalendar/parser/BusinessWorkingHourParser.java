@@ -1,7 +1,7 @@
 package af.gov.anar.lib.businessworkingcalendar.parser;
 
-import af.gov.anar.lib.businessworkingcalendar.domain.BusinessPeriod;
-import af.gov.anar.lib.businessworkingcalendar.domain.BusinessTemporal;
+import af.gov.anar.lib.businessworkingcalendar.domain.BusinessWorkingPeriod;
+import af.gov.anar.lib.businessworkingcalendar.domain.BusinessWorkingTemporal;
 
 import java.time.DayOfWeek;
 import java.time.temporal.ChronoField;
@@ -25,9 +25,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.Map.Entry;
-import java.util.AbstractMap.SimpleImmutableEntry;
 
-public class BusinessHoursParser {
+public class BusinessWorkingHourParser {
 
     /**
      * Maps containing the fields supported by the parsing The keys are the
@@ -42,8 +41,8 @@ public class BusinessHoursParser {
             = Collections.unmodifiableMap(new HashMap<ChronoField, Entry<Pattern, ToIntFunction<String>>>() {
         {
             put(ChronoField.MINUTE_OF_HOUR, new SimpleImmutableEntry<>(Pattern.compile("(?:min|minute) *\\{(.*?)\\}"), Integer::parseInt));
-            put(ChronoField.HOUR_OF_DAY, new SimpleImmutableEntry<>(Pattern.compile("(?:hr|hour) *\\{(.*?)\\}"), BusinessHoursParser::hourStringToInt));
-            put(ChronoField.DAY_OF_WEEK, new SimpleImmutableEntry<>(Pattern.compile("(?:wday|wd) *\\{(.*?)\\}"), BusinessHoursParser::weekDayStringToInt));
+            put(ChronoField.HOUR_OF_DAY, new SimpleImmutableEntry<>(Pattern.compile("(?:hr|hour) *\\{(.*?)\\}"), BusinessWorkingHourParser::hourStringToInt));
+            put(ChronoField.DAY_OF_WEEK, new SimpleImmutableEntry<>(Pattern.compile("(?:wday|wd) *\\{(.*?)\\}"), BusinessWorkingHourParser::weekDayStringToInt));
         }
     });
 
@@ -175,9 +174,9 @@ public class BusinessHoursParser {
      * business periods
      *
      * @param ranges the range combination
-     * @return a stream of {@link BusinessPeriod}
+     * @return a stream of {@link BusinessWorkingPeriod}
      */
-    private static Stream<BusinessPeriod> toBusinessPeriods(NavigableMap<ChronoField, ValueRange> ranges) {
+    private static Stream<BusinessWorkingPeriod> toBusinessPeriods(NavigableMap<ChronoField, ValueRange> ranges) {
         //no need to break the least significant range since it already is continuous
         ChronoField firstField = ranges.firstKey();
         ValueRange firstRange = ranges.get(firstField);
@@ -187,9 +186,9 @@ public class BusinessHoursParser {
         int periodNb = remainingRanges
                 .values()
                 .stream()
-                .mapToInt(BusinessHoursParser::getRangeLength)
+                .mapToInt(BusinessWorkingHourParser::getRangeLength)
                 .reduce(1, (a, b) -> a * b);
-        List<BusinessPeriod> periods = new ArrayList<>();
+        List<BusinessWorkingPeriod> periods = new ArrayList<>();
 
         //compute all the periods
         for (int i = 0; i < periodNb; i++) {
@@ -207,23 +206,23 @@ public class BusinessHoursParser {
                 endFields.put(field, value);
                 divisor *= rangeLength;
             }
-            periods.add(new BusinessPeriod(BusinessTemporal.of(startFields), BusinessTemporal.of(endFields)));
+            periods.add(new BusinessWorkingPeriod(BusinessWorkingTemporal.of(startFields), BusinessWorkingTemporal.of(endFields)));
         }
 
         return periods.stream();
     }
 
-    public static Set<BusinessPeriod> parse(String businessHours) {
+    public static Set<BusinessWorkingPeriod> parse(String BusinessWorkingHour) {
         //split the string in distinct sub periods,
         //convert them in business periods
         //and merge intersecting periods
-        return BusinessPeriod.merge(
-                Arrays.stream(businessHours.split(","))
-                        .flatMap(BusinessHoursParser::parseSubBusinessHours)
+        return BusinessWorkingPeriod.merge(
+                Arrays.stream(BusinessWorkingHour.split(","))
+                        .flatMap(BusinessWorkingHourParser::parseSubBusinessWorkingHour)
                         .collect(Collectors.toSet()));
     }
 
-    private static Stream<BusinessPeriod> parseSubBusinessHours(String subPeriod) {
+    private static Stream<BusinessWorkingPeriod> parseSubBusinessWorkingHour(String subPeriod) {
         //compute the list of acceptable ranges for each field
         SortedMap<ChronoField, List<ValueRange>> acceptedRanges = new TreeMap<ChronoField, List<ValueRange>>();
         SUPPORTED_FIELDS.forEach(
@@ -239,7 +238,7 @@ public class BusinessHoursParser {
         //get all range combination and convert them to business periods
         return getRangeCombinations(acceptedRanges)
                 .stream()
-                .flatMap(BusinessHoursParser::toBusinessPeriods);
+                .flatMap(BusinessWorkingHourParser::toBusinessPeriods);
     }
 
 }

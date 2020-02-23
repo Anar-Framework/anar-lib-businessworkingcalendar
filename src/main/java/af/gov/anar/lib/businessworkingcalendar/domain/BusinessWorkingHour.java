@@ -1,7 +1,7 @@
 package af.gov.anar.lib.businessworkingcalendar.domain;
 
 import af.gov.anar.lib.businessworkingcalendar.expression.CronExpression;
-import af.gov.anar.lib.businessworkingcalendar.parser.BusinessHoursParser;
+import af.gov.anar.lib.businessworkingcalendar.parser.BusinessWorkingHourParser;
 
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
@@ -87,20 +87,20 @@ import java.util.stream.Collectors;
  *
  * @author Maxime Suret
  */
-public class BusinessHours {
+public class BusinessWorkingHour {
 
     private final String stringValue;
-    private final Set<BusinessPeriod> periods;
+    private final Set<BusinessWorkingPeriod> periods;
 
     /**
-     * Build a new instance of BusinessHours from its string representation.
+     * Build a new instance of BusinessWorkingHour from its string representation.
      *
      * @param stringValue the string representation of the business hours. See
      * the class level Javadoc for more info on valid formats.
      */
-    public BusinessHours(String stringValue) {
+    public BusinessWorkingHour(String stringValue) {
         this.stringValue = stringValue;
-        this.periods = new HashSet<>(BusinessHoursParser.parse(stringValue));
+        this.periods = new HashSet<>(BusinessWorkingHourParser.parse(stringValue));
     }
 
     /**
@@ -144,7 +144,7 @@ public class BusinessHours {
                 .merge(
                         periods
                                 .stream()
-                                .map(BusinessPeriod::getStartCron)
+                                .map(BusinessWorkingPeriod::getStartCron)
                                 .filter(Objects::nonNull)
                                 .collect(Collectors.toSet()))
                 .stream()
@@ -164,7 +164,7 @@ public class BusinessHours {
                 .merge(
                         periods
                                 .stream()
-                                .map(BusinessPeriod::getEndCron)
+                                .map(BusinessWorkingPeriod::getEndCron)
                                 .filter(Objects::nonNull)
                                 .collect(Collectors.toSet()))
                 .stream()
@@ -173,7 +173,7 @@ public class BusinessHours {
     }
 
     /**
-     * Returns a hash code for this BusinessHours.
+     * Returns a hash code for this BusinessWorkingHour.
      *
      * @return a suitable hash code
      */
@@ -189,24 +189,24 @@ public class BusinessHours {
      * same instants (regardless of the string representation used to build
      * them).
      *
-     * @param obj the other BusinessHours, null returns false
-     * @return true if the other BusinessHours is equals to this one
+     * @param obj the other BusinessWorkingHour, null returns false
+     * @return true if the other BusinessWorkingHour is equals to this one
      */
     @Override
     public boolean equals(Object obj) {
         return Optional
                 .ofNullable(obj)
-                .filter(BusinessHours.class::isInstance)
-                .filter(other -> periods.equals(((BusinessHours) other).periods))
+                .filter(BusinessWorkingHour.class::isInstance)
+                .filter(other -> periods.equals(((BusinessWorkingHour) other).periods))
                 .isPresent();
     }
 
     /**
-     * Return a string representation of this BusinessHours instance.
+     * Return a string representation of this BusinessWorkingHour instance.
      * <p>
      * It is the same String as the one used to build this instance.
      *
-     * @return the string representation of this BusinessHours instance.
+     * @return the string representation of this BusinessWorkingHour instance.
      */
     @Override
     public String toString() {

@@ -24,31 +24,31 @@ import java.util.TreeMap;
  * A temporal containing fields that can be used to define business hours. These
  * fields must be continguous and have a fixed range.
  */
-public class BusinessTemporal implements Temporal, Comparable<Temporal> {
+public class BusinessWorkingTemporal implements Temporal, Comparable<Temporal> {
 
     private final NavigableMap<ChronoField, Integer> fieldValues;
 
-    private BusinessTemporal(Map<ChronoField, Integer> fieldValues) {
+    private BusinessWorkingTemporal(Map<ChronoField, Integer> fieldValues) {
         super();
         this.fieldValues = Collections.unmodifiableNavigableMap(new TreeMap<ChronoField, Integer>(fieldValues));
         validateFields(this.fieldValues.navigableKeySet());
     }
 
     /**
-     * Builds a {@link BusinessTemporal} instance from its fields values
+     * Builds a {@link BusinessWorkingTemporal} instance from its fields values
      *
      * @param fieldValues the values of the fields. The fields must be
      * contiguous and have a fixed range.
-     * @return the {@link BusinessTemporal} instance
+     * @return the {@link BusinessWorkingTemporal} instance
      */
-    public static BusinessTemporal of(Map<ChronoField, Integer> fieldValues) {
-        return new BusinessTemporal(fieldValues);
+    public static BusinessWorkingTemporal of(Map<ChronoField, Integer> fieldValues) {
+        return new BusinessWorkingTemporal(fieldValues);
     }
 
-    private static BusinessTemporal from(TemporalAccessor temporal, Set<ChronoField> supportedFields) {
+    private static BusinessWorkingTemporal from(TemporalAccessor temporal, Set<ChronoField> supportedFields) {
         Map<ChronoField, Integer> fieldValues = new HashMap<>();
         supportedFields.forEach(field -> fieldValues.put(field, temporal.get(field)));
-        return new BusinessTemporal(fieldValues);
+        return new BusinessWorkingTemporal(fieldValues);
     }
 
     /**
@@ -134,7 +134,7 @@ public class BusinessTemporal implements Temporal, Comparable<Temporal> {
                     .ofNullable(newFieldValues.replace(chronoField, chronoField.checkValidIntValue(newValue)))
                     .orElseThrow(() -> new UnsupportedTemporalTypeException("Unsupported field: " + field));
 
-            return new BusinessTemporal(newFieldValues);
+            return new BusinessWorkingTemporal(newFieldValues);
         }
         return field.adjustInto(this, newValue);
     }
@@ -155,7 +155,7 @@ public class BusinessTemporal implements Temporal, Comparable<Temporal> {
                 newFieldValues.put(field, field.checkValidIntValue(field.range().getMinimum() + Math.floorMod(sum, rangeLength)));
                 amountToAdd = Math.floorDiv(sum, rangeLength);
             }
-            return new BusinessTemporal(newFieldValues);
+            return new BusinessWorkingTemporal(newFieldValues);
         }
         return unit.addTo(this, amountToAdd);
     }
@@ -175,10 +175,10 @@ public class BusinessTemporal implements Temporal, Comparable<Temporal> {
      */
     @Override
     public long until(Temporal endExclusive, TemporalUnit unit) {
-        //the implementation requirements state that 'endExclusive' must first be converted into a BusinessTemporal
+        //the implementation requirements state that 'endExclusive' must first be converted into a BusinessWorkingTemporal
         //it means that some precision can be lost and the result can only be/precise up to the smallest supported
         //unit of this temporal
-        BusinessTemporal end = from(endExclusive, fieldValues.keySet());
+        BusinessWorkingTemporal end = from(endExclusive, fieldValues.keySet());
         if (unit instanceof ChronoUnit) {
             return durationInUnit(durationUntil(end), unit);
         }
@@ -190,8 +190,8 @@ public class BusinessTemporal implements Temporal, Comparable<Temporal> {
      *
      * @return a new Business Temporal with the incremented field
      */
-    public BusinessTemporal increment() {
-        return (BusinessTemporal) plus(1, fieldValues.firstKey().getBaseUnit());
+    public BusinessWorkingTemporal increment() {
+        return (BusinessWorkingTemporal) plus(1, fieldValues.firstKey().getBaseUnit());
     }
 
     /**
@@ -263,8 +263,8 @@ public class BusinessTemporal implements Temporal, Comparable<Temporal> {
     @Override
     public boolean equals(Object obj) {
         return Optional.ofNullable(obj)
-                .filter(BusinessTemporal.class::isInstance)
-                .filter(other -> fieldValues.equals(((BusinessTemporal) other).fieldValues))
+                .filter(BusinessWorkingTemporal.class::isInstance)
+                .filter(other -> fieldValues.equals(((BusinessWorkingTemporal) other).fieldValues))
                 .isPresent();
     }
 

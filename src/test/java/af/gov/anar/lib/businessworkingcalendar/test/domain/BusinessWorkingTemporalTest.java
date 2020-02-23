@@ -16,14 +16,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import af.gov.anar.lib.businessworkingcalendar.domain.BusinessTemporal;
+import af.gov.anar.lib.businessworkingcalendar.domain.BusinessWorkingTemporal;
 import org.junit.Test;
 
-public class BusinessTemporalTest {
+public class BusinessWorkingTemporalTest {
 
     @Test(expected = DateTimeException.class)
     public void fromNonContiguousFields() {
-        BusinessTemporal.of(new HashMap<ChronoField, Integer>() {
+        BusinessWorkingTemporal.of(new HashMap<ChronoField, Integer>() {
             {
                 put(ChronoField.MILLI_OF_SECOND, 0);
                 put(ChronoField.MINUTE_OF_HOUR, 0);
@@ -33,27 +33,27 @@ public class BusinessTemporalTest {
 
     @Test(expected = DateTimeException.class)
     public void fromVariableLengthFields() {
-        BusinessTemporal.of(Collections.singletonMap(ChronoField.DAY_OF_MONTH, 1));
+        BusinessWorkingTemporal.of(Collections.singletonMap(ChronoField.DAY_OF_MONTH, 1));
     }
 
     @Test
     public void temporalQueries() {
         assertEquals(
-                BusinessTemporal.of(toMap(ChronoField.HOUR_OF_DAY, 0, ChronoField.MINUTE_OF_HOUR, 0))
+                BusinessWorkingTemporal.of(toMap(ChronoField.HOUR_OF_DAY, 0, ChronoField.MINUTE_OF_HOUR, 0))
                         .query(TemporalQueries.precision()),
                 ChronoUnit.MINUTES);
         assertEquals(
-                BusinessTemporal.of(toMap(ChronoField.HOUR_OF_DAY, 0, ChronoField.MINUTE_OF_HOUR, 0, ChronoField.SECOND_OF_MINUTE, 0))
+                BusinessWorkingTemporal.of(toMap(ChronoField.HOUR_OF_DAY, 0, ChronoField.MINUTE_OF_HOUR, 0, ChronoField.SECOND_OF_MINUTE, 0))
                         .query(TemporalQueries.precision()),
                 ChronoUnit.SECONDS);
         assertNull(
-                BusinessTemporal.of(Collections.singletonMap(ChronoField.HOUR_OF_DAY, 0))
+                BusinessWorkingTemporal.of(Collections.singletonMap(ChronoField.HOUR_OF_DAY, 0))
                         .query(TemporalQueries.zoneId()));
     }
 
     @Test
     public void supportedFields() {
-        BusinessTemporal bt = BusinessTemporal.of(Collections.singletonMap(ChronoField.DAY_OF_WEEK, 1));
+        BusinessWorkingTemporal bt = BusinessWorkingTemporal.of(Collections.singletonMap(ChronoField.DAY_OF_WEEK, 1));
         assertEquals(bt.isSupported(ChronoField.DAY_OF_WEEK), true);
         assertEquals(bt.isSupported(ChronoField.HOUR_OF_DAY), false);
         assertEquals(bt.isSupported(WeekFields.SUNDAY_START.dayOfWeek()), true);
@@ -62,24 +62,24 @@ public class BusinessTemporalTest {
 
     @Test
     public void getSupportedField() {
-        BusinessTemporal bt = BusinessTemporal.of(Collections.singletonMap(ChronoField.DAY_OF_WEEK, 1));
+        BusinessWorkingTemporal bt = BusinessWorkingTemporal.of(Collections.singletonMap(ChronoField.DAY_OF_WEEK, 1));
         assertEquals(bt.getLong(ChronoField.DAY_OF_WEEK), 1);
         assertEquals(bt.getLong(WeekFields.SUNDAY_START.dayOfWeek()), 2);
     }
 
     @Test(expected = UnsupportedTemporalTypeException.class)
     public void getUnsupportedChronoField() {
-        BusinessTemporal.of(Collections.singletonMap(ChronoField.DAY_OF_WEEK, 1)).getLong(ChronoField.HOUR_OF_DAY);
+        BusinessWorkingTemporal.of(Collections.singletonMap(ChronoField.DAY_OF_WEEK, 1)).getLong(ChronoField.HOUR_OF_DAY);
     }
 
     @Test(expected = UnsupportedTemporalTypeException.class)
     public void getUnsupportedField() {
-        BusinessTemporal.of(Collections.singletonMap(ChronoField.DAY_OF_WEEK, 1)).getLong(IsoFields.QUARTER_OF_YEAR);
+        BusinessWorkingTemporal.of(Collections.singletonMap(ChronoField.DAY_OF_WEEK, 1)).getLong(IsoFields.QUARTER_OF_YEAR);
     }
 
     @Test
     public void withSupportedField() {
-        BusinessTemporal bt = BusinessTemporal.of(toMap(ChronoField.DAY_OF_WEEK, 1, ChronoField.HOUR_OF_DAY, 0));
+        BusinessWorkingTemporal bt = BusinessWorkingTemporal.of(toMap(ChronoField.DAY_OF_WEEK, 1, ChronoField.HOUR_OF_DAY, 0));
         Temporal temporal = bt.with(ChronoField.DAY_OF_WEEK, 2);
         assertEquals(temporal.getLong(ChronoField.DAY_OF_WEEK), 2);
         assertEquals(temporal.getLong(ChronoField.HOUR_OF_DAY), 0);
@@ -91,22 +91,22 @@ public class BusinessTemporalTest {
 
     @Test(expected = DateTimeException.class)
     public void withInvalidFieldValue() {
-        BusinessTemporal.of(Collections.singletonMap(ChronoField.SECOND_OF_MINUTE, 0)).with(ChronoField.SECOND_OF_MINUTE, 61);
+        BusinessWorkingTemporal.of(Collections.singletonMap(ChronoField.SECOND_OF_MINUTE, 0)).with(ChronoField.SECOND_OF_MINUTE, 61);
     }
 
     @Test(expected = UnsupportedTemporalTypeException.class)
     public void withUnsupportedChronoField() {
-        BusinessTemporal.of(Collections.singletonMap(ChronoField.DAY_OF_WEEK, 1)).with(ChronoField.HOUR_OF_DAY, 0);
+        BusinessWorkingTemporal.of(Collections.singletonMap(ChronoField.DAY_OF_WEEK, 1)).with(ChronoField.HOUR_OF_DAY, 0);
     }
 
     @Test(expected = UnsupportedTemporalTypeException.class)
     public void withUnsupportedField() {
-        BusinessTemporal.of(Collections.singletonMap(ChronoField.DAY_OF_WEEK, 1)).with(IsoFields.QUARTER_OF_YEAR, 0);
+        BusinessWorkingTemporal.of(Collections.singletonMap(ChronoField.DAY_OF_WEEK, 1)).with(IsoFields.QUARTER_OF_YEAR, 0);
     }
 
     @Test
     public void supportedUnits() {
-        BusinessTemporal bt = BusinessTemporal.of(Collections.singletonMap(ChronoField.DAY_OF_WEEK, 1));
+        BusinessWorkingTemporal bt = BusinessWorkingTemporal.of(Collections.singletonMap(ChronoField.DAY_OF_WEEK, 1));
         assertEquals(bt.isSupported(ChronoUnit.DAYS), true);
         assertEquals(bt.isSupported(ChronoUnit.WEEKS), false);
         assertEquals(bt.isSupported(IsoFields.QUARTER_YEARS), false);
@@ -114,7 +114,7 @@ public class BusinessTemporalTest {
 
     @Test
     public void plusSupportedUnit() {
-        BusinessTemporal bt = BusinessTemporal.of(toMap(ChronoField.HOUR_OF_DAY, 0, ChronoField.MINUTE_OF_HOUR, 0));
+        BusinessWorkingTemporal bt = BusinessWorkingTemporal.of(toMap(ChronoField.HOUR_OF_DAY, 0, ChronoField.MINUTE_OF_HOUR, 0));
         Temporal temporal = bt.plus(1, ChronoUnit.MINUTES);
         assertEquals(temporal.getLong(ChronoField.MINUTE_OF_HOUR), 1);
         assertEquals(temporal.getLong(ChronoField.HOUR_OF_DAY), 0);
@@ -158,28 +158,28 @@ public class BusinessTemporalTest {
 
     @Test(expected = UnsupportedTemporalTypeException.class)
     public void plusUnsupportedChronoUnit() {
-        BusinessTemporal.of(Collections.singletonMap(ChronoField.MINUTE_OF_HOUR, 0)).plus(1, ChronoUnit.HOURS);
+        BusinessWorkingTemporal.of(Collections.singletonMap(ChronoField.MINUTE_OF_HOUR, 0)).plus(1, ChronoUnit.HOURS);
     }
 
     @Test(expected = UnsupportedTemporalTypeException.class)
     public void plusUnsupportedUnit() {
-        BusinessTemporal.of(Collections.singletonMap(ChronoField.MINUTE_OF_HOUR, 0)).plus(1, IsoFields.QUARTER_YEARS);
+        BusinessWorkingTemporal.of(Collections.singletonMap(ChronoField.MINUTE_OF_HOUR, 0)).plus(1, IsoFields.QUARTER_YEARS);
     }
 
     @Test
     public void increment() {
-        BusinessTemporal bt = BusinessTemporal.of(toMap(ChronoField.HOUR_OF_DAY, 0, ChronoField.MINUTE_OF_HOUR, 0)).increment();
+        BusinessWorkingTemporal bt = BusinessWorkingTemporal.of(toMap(ChronoField.HOUR_OF_DAY, 0, ChronoField.MINUTE_OF_HOUR, 0)).increment();
         assertEquals(bt.getLong(ChronoField.MINUTE_OF_HOUR), 1);
         assertEquals(bt.getLong(ChronoField.HOUR_OF_DAY), 0);
 
-        bt = BusinessTemporal.of(toMap(ChronoField.HOUR_OF_DAY, 0, ChronoField.MINUTE_OF_HOUR, 59)).increment();
+        bt = BusinessWorkingTemporal.of(toMap(ChronoField.HOUR_OF_DAY, 0, ChronoField.MINUTE_OF_HOUR, 59)).increment();
         assertEquals(bt.getLong(ChronoField.MINUTE_OF_HOUR), 0);
         assertEquals(bt.getLong(ChronoField.HOUR_OF_DAY), 1);
     }
 
     @Test
     public void untilChronoUnit() {
-        BusinessTemporal bt = BusinessTemporal.of(toMap(ChronoField.HOUR_OF_DAY, 11, ChronoField.MINUTE_OF_HOUR, 30));
+        BusinessWorkingTemporal bt = BusinessWorkingTemporal.of(toMap(ChronoField.HOUR_OF_DAY, 11, ChronoField.MINUTE_OF_HOUR, 30));
         assertEquals(bt.until(LocalTime.of(13, 29), ChronoUnit.MINUTES), 119);
         assertEquals(bt.until(LocalTime.of(13, 29), ChronoUnit.HOURS), 1);
         assertEquals(bt.until(LocalTime.of(13, 29), ChronoUnit.DAYS), 0);
@@ -188,37 +188,37 @@ public class BusinessTemporalTest {
 
     @Test(expected = UnsupportedTemporalTypeException.class)
     public void sinceInvalidTemporal() {
-        BusinessTemporal.of(Collections.singletonMap(ChronoField.DAY_OF_WEEK, 1)).until(LocalTime.of(0, 0), ChronoUnit.DAYS);
+        BusinessWorkingTemporal.of(Collections.singletonMap(ChronoField.DAY_OF_WEEK, 1)).until(LocalTime.of(0, 0), ChronoUnit.DAYS);
     }
 
     @Test
     public void since() {
-        assertEquals(BusinessTemporal
+        assertEquals(BusinessWorkingTemporal
                 .of(toMap(ChronoField.HOUR_OF_DAY, 13, ChronoField.MINUTE_OF_HOUR, 29))
                 .since(LocalTime.of(11, 30, 1), ChronoUnit.HOURS), 1);
 
-        assertEquals(BusinessTemporal
+        assertEquals(BusinessWorkingTemporal
                 .of(toMap(ChronoField.HOUR_OF_DAY, 13, ChronoField.MINUTE_OF_HOUR, 29))
                 .since(LocalTime.of(11, 30, 1), ChronoUnit.MINUTES), 118);
 
-        assertEquals(BusinessTemporal
+        assertEquals(BusinessWorkingTemporal
                 .of(toMap(ChronoField.HOUR_OF_DAY, 13, ChronoField.MINUTE_OF_HOUR, 29))
                 .since(LocalTime.of(11, 30, 1), ChronoUnit.SECONDS), 7139);
 
-        assertEquals(BusinessTemporal
+        assertEquals(BusinessWorkingTemporal
                 .of(toMap(ChronoField.HOUR_OF_DAY, 13, ChronoField.MINUTE_OF_HOUR, 29))
                 .since(LocalTime.of(11, 30, 1), ChronoUnit.MILLIS), 7139000);
 
-        assertEquals(BusinessTemporal
+        assertEquals(BusinessWorkingTemporal
                 .of(toMap(ChronoField.HOUR_OF_DAY, 11, ChronoField.MINUTE_OF_HOUR, 30))
                 .since(LocalTime.of(13, 29, 1), ChronoUnit.MILLIS), 79259000);
     }
 
     @Test
     public void compare() {
-        assertEquals(BusinessTemporal.of(Collections.singletonMap(ChronoField.HOUR_OF_DAY, 1)).compareTo(LocalTime.of(1, 0)), 0);
-        assertTrue(BusinessTemporal.of(Collections.singletonMap(ChronoField.HOUR_OF_DAY, 2)).compareTo(LocalTime.of(1, 0)) > 0);
-        assertTrue(BusinessTemporal.of(Collections.singletonMap(ChronoField.HOUR_OF_DAY, 0)).compareTo(LocalTime.of(1, 0)) < 0);
+        assertEquals(BusinessWorkingTemporal.of(Collections.singletonMap(ChronoField.HOUR_OF_DAY, 1)).compareTo(LocalTime.of(1, 0)), 0);
+        assertTrue(BusinessWorkingTemporal.of(Collections.singletonMap(ChronoField.HOUR_OF_DAY, 2)).compareTo(LocalTime.of(1, 0)) > 0);
+        assertTrue(BusinessWorkingTemporal.of(Collections.singletonMap(ChronoField.HOUR_OF_DAY, 0)).compareTo(LocalTime.of(1, 0)) < 0);
     }
 
     private static Map<ChronoField, Integer> toMap(

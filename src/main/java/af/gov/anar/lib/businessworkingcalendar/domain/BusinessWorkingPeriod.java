@@ -18,17 +18,17 @@ import java.util.function.BinaryOperator;
 /**
  * A continous period of business opening.
  */
-public class BusinessPeriod {
+public class BusinessWorkingPeriod {
 
-    private final BusinessTemporal start;
-    private final BusinessTemporal end;
+    private final BusinessWorkingTemporal start;
+    private final BusinessWorkingTemporal end;
 
     /**
-     * Builds a new instance of {@link BusinessPeriod}.
+     * Builds a new instance of {@link BusinessWorkingPeriod}.
      * @param start when the period opens
      * @param end when the period closes
      */
-    public BusinessPeriod(BusinessTemporal start, BusinessTemporal end) {
+    public BusinessWorkingPeriod(BusinessWorkingTemporal start, BusinessWorkingTemporal end) {
         this.start = Objects.requireNonNull(start);
         this.end = Objects.requireNonNull(end);
     }
@@ -82,7 +82,7 @@ public class BusinessPeriod {
      * Get the opening time of this period.
      * @return when this period opens
      */
-    public BusinessTemporal getStart() {
+    public BusinessWorkingTemporal getStart() {
         return start;
     }
 
@@ -90,7 +90,7 @@ public class BusinessPeriod {
      * Get the closing time of this period.
      * @return when this period closes
      */
-    public BusinessTemporal getEnd() {
+    public BusinessWorkingTemporal getEnd() {
         return end;
     }
 
@@ -113,9 +113,9 @@ public class BusinessPeriod {
     public boolean equals(Object obj) {
         return Optional
                 .ofNullable(obj)
-                .filter(BusinessPeriod.class::isInstance)
-                .filter(other -> start.equals(((BusinessPeriod) other).start))
-                .filter(other -> end.equals(((BusinessPeriod) other).end))
+                .filter(BusinessWorkingPeriod.class::isInstance)
+                .filter(other -> start.equals(((BusinessWorkingPeriod) other).start))
+                .filter(other -> end.equals(((BusinessWorkingPeriod) other).end))
                 .isPresent();
     }
 
@@ -125,25 +125,25 @@ public class BusinessPeriod {
      * @return the merged periods.
      * Their opening time spans will be exactly the same as the input periods.
      */
-    public static Set<BusinessPeriod> merge(Collection<BusinessPeriod> periods) {
+    public static Set<BusinessWorkingPeriod> merge(Collection<BusinessWorkingPeriod> periods) {
         //sort the periods by start date
-        List<BusinessPeriod> sortedPeriods = new ArrayList<>(periods);
-        Collections.sort(sortedPeriods, Comparator.comparing(BusinessPeriod::getStart));
+        List<BusinessWorkingPeriod> sortedPeriods = new ArrayList<>(periods);
+        Collections.sort(sortedPeriods, Comparator.comparing(BusinessWorkingPeriod::getStart));
 
-        Set<BusinessPeriod> mergedPeriods = new HashSet<>(periods.size());
-        BusinessPeriod currentPeriod = null;
-        for (BusinessPeriod period : sortedPeriods) {
+        Set<BusinessWorkingPeriod> mergedPeriods = new HashSet<>(periods.size());
+        BusinessWorkingPeriod currentPeriod = null;
+        for (BusinessWorkingPeriod period : sortedPeriods) {
             if (currentPeriod == null) {
                 currentPeriod = period;
             } else {
                 //check if the start of the period is included in the previous period
                 if (currentPeriod.isInPeriod(period.getStart())) {
-                    currentPeriod = new BusinessPeriod(
+                    currentPeriod = new BusinessWorkingPeriod(
                             currentPeriod.getStart(),
-                            BinaryOperator.maxBy(Comparator.<BusinessTemporal>naturalOrder()).apply(currentPeriod.getEnd(), period.getEnd()));
+                            BinaryOperator.maxBy(Comparator.<BusinessWorkingTemporal>naturalOrder()).apply(currentPeriod.getEnd(), period.getEnd()));
                 } else if (currentPeriod.getEnd().increment().equals(period.getStart())) {
                     //check if the two periods are contiguous
-                    currentPeriod = new BusinessPeriod(currentPeriod.getStart(), period.getEnd());
+                    currentPeriod = new BusinessWorkingPeriod(currentPeriod.getStart(), period.getEnd());
                 } else {
                     //the periods can not be merged
                     mergedPeriods.add(currentPeriod);
