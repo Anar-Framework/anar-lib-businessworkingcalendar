@@ -1,4 +1,4 @@
-package af.gov.anar.lib.businessworkingcalendar.test;
+package af.gov.anar.lib.businessworkingcalendar.test.domain;
 
 import java.time.LocalTime;
 import java.time.temporal.ChronoField;

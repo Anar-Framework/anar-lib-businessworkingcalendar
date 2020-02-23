@@ -1,4 +1,4 @@
-package af.gov.anar.lib.businessworkingcalendar.test;
+package af.gov.anar.lib.businessworkingcalendar.test.domain;
 
 import java.time.DateTimeException;
 import java.time.LocalTime;
