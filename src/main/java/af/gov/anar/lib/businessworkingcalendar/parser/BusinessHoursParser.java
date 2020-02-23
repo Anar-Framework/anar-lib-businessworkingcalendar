@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 import java.util.Map.Entry;
 import java.util.AbstractMap.SimpleImmutableEntry;
 
-class BusinessHoursParser {
+public class BusinessHoursParser {
 
     /**
      * Maps containing the fields supported by the parsing The keys are the
